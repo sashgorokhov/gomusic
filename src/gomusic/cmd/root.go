@@ -9,7 +9,7 @@ import (
 	"errors"
 )
 
-var replaceChars bool
+var replace_chars, reuse_token bool
 var access_token string
 var login, password string
 var Api *govk.Api
@@ -27,7 +27,7 @@ var RootCmd = &cobra.Command{
 				return err
 			}
 		case login != "" && password != "":
-			Api, err = utils.Auth_by_login_and_password(login, password)
+			Api, err = utils.Auth_by_login_and_password(login, password, reuse_token)
 			if err != nil {
 				return err
 			}
@@ -48,7 +48,8 @@ func Execute() {
 
 
 func init() {
-	RootCmd.PersistentFlags().BoolVar(&replaceChars, "replace_chars", true, "Only allow basic alphabet (rus+eng), digits and some signs.")
+	RootCmd.PersistentFlags().BoolVar(&replace_chars, "replace_chars", true, "Only allow basic alphabet (rus+eng), digits and some signs.")
+	RootCmd.PersistentFlags().BoolVar(&reuse_token, "reuse_token", true, "Reuse access token")
 	RootCmd.PersistentFlags().StringVar(&access_token, "access_token", "", "Plain access token or path to file where first line is access token.")
 	RootCmd.PersistentFlags().StringVarP(&login, "login", "l", "", "Login")
 	RootCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "Password")

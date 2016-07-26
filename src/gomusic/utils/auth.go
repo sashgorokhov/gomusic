@@ -28,10 +28,21 @@ func Auth_by_access_token(access_token string) (*govk.Api, error) {
 }
 
 
-func Auth_by_login_and_password(login, password string) (*govk.Api, error) {
-	auth_info, err := govk.Authenticate(login, password, CLIENT_ID, &SCOPE)
-	if err != nil {
-		return nil, err
+func Auth_by_login_and_password(login, password string, reuse_token bool) (*govk.Api, error) {
+	var auth_info *govk.AuthInfo
+	if reuse_token {
+		auth_info, _ = Get(login)
+	}
+	if auth_info == nil {
+		var err error
+		auth_info, err = govk.Authenticate(login, password, CLIENT_ID, &SCOPE)
+		if err != nil {
+			return nil, err
+		}
+		if reuse_token {
+			Add(login, auth_info)
+		}
+
 	}
 	return Auth_by_access_token(auth_info.Access_token)
 }
