@@ -5,11 +5,22 @@ import (
 	"gomusic/structs"
 	"log"
 	"strconv"
+	"path/filepath"
+	"path"
+	"gomusic/formatters"
+	"os"
+	"fmt"
 	"gomusic/utils"
 )
 
 var skip_error, skip_exists bool
 var destination string
+
+
+func make_audio_filename(audio *structs.Audio) string {
+	return path.Join(filepath.ToSlash(destination), formatters.Format_audio_filename(audio, replace_chars))
+}
+
 
 var downloadCmd = &cobra.Command{
 	Use:   "download",
@@ -31,8 +42,20 @@ var downloadCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
-		for i, v := range audio_list.Response.Items  {
-			go utils.DownloadAudio(v)
+		for _, v := range audio_list.Response.Items  {
+			filename := make_audio_filename(&v)
+			if _, err := os.Stat(filename); err == nil && skip_exists {
+				fmt.Println("Skipping")
+				continue
+			}
+			_, file := path.Split(filename)
+			pb := utils.ProgressBar{Title:file}
+			pb.Init()
+			err := utils.Download_file(v.CleanUrl(), filename, pb.Update)
+			pb.Finish()
+			if err != nil && ! skip_error {
+				panic(err)
+			}
 		}
 	},
 }
