@@ -5,7 +5,7 @@ import (
 	"os"
 	"github.com/spf13/cobra"
 	"github.com/sashgorokhov/govk"
-	"gomusic/utils"
+	"github.com/sashgorokhov/gomusic/utils"
 	"errors"
 )
 

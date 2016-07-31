@@ -1,6 +1,6 @@
 package main
 
-import "gomusic/cmd"
+import "github.com/sashgorokhov/gomusic/cmd"
 
 func main() {
 	cmd.Execute()

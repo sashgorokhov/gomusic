@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gomusic/structs"
+	"github.com/sashgorokhov/gomusic/structs"
 	"log"
 	"fmt"
-	"gomusic/formatters"
+	"github.com/sashgorokhov/gomusic/formatters"
 	"strconv"
 )
 

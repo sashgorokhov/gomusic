@@ -2,15 +2,15 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gomusic/structs"
+	"github.com/sashgorokhov/gomusic/structs"
 	"log"
 	"strconv"
 	"path/filepath"
 	"path"
-	"gomusic/formatters"
+	"github.com/sashgorokhov/gomusic/formatters"
 	"os"
 	"fmt"
-	"gomusic/utils"
+	"github.com/sashgorokhov/gomusic/utils"
 )
 
 var skip_error, skip_exists bool

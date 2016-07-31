@@ -3,9 +3,9 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"fmt"
-	"gomusic/structs"
+	"github.com/sashgorokhov/gomusic/structs"
 	"log"
-	"gomusic/formatters"
+	"github.com/sashgorokhov/gomusic/formatters"
 	"strconv"
 )
 

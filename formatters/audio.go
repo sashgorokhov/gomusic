@@ -1,7 +1,7 @@
 package formatters
 
 import (
-	"gomusic/structs"
+	"github.com/sashgorokhov/gomusic/structs"
 	"strconv"
 	"strings"
 )
