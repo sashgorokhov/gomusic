@@ -61,7 +61,7 @@ var downloadCmd = &cobra.Command{
 }
 
 func init() {
-	musicCmd.AddCommand(downloadCmd)
+	MusicCommand.AddCommand(downloadCmd)
 
 	downloadCmd.Flags().IntVar(&offset, "offset", 0, "Offset")
 	downloadCmd.Flags().IntVarP(&count, "count", "c", 50, "How many audios to fetch. Specify -1 to show all available (offset also works here).")

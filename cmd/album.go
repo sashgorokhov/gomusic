@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-var albumsCmd = &cobra.Command{
+var AlbumsCommand = &cobra.Command{
 	Use:   "albums",
 	Short: "List albums",
 	Long: `List albums`,
@@ -33,11 +33,9 @@ var albumsCmd = &cobra.Command{
 }
 
 func init() {
-	listCmd.AddCommand(albumsCmd)
-
-	albumsCmd.Flags().IntVar(&offset, "offset", 0, "Offset")
-	albumsCmd.Flags().IntVarP(&count, "count", "c", 50, "How many albums to fetch. Specify -1 to show all available (offset also works here).")
-	albumsCmd.Flags().IntVar(&owner_id, "owner_id", 0, "Owner id")
-	albumsCmd.Flags().BoolVarP(&quiet, "quiet", "q", false, "Print only albums ids")
-	albumsCmd.Flags().StringVarP(&format, "format", "f", formatters.Album_format_default, "Print format. Available values: id, title. Mix it in desireble order.")
+	AlbumsCommand.Flags().IntVar(&offset, "offset", 0, "Offset")
+	AlbumsCommand.Flags().IntVarP(&count, "count", "c", 50, "How many albums to fetch. Specify -1 to show all available (offset also works here).")
+	AlbumsCommand.Flags().IntVar(&owner_id, "owner_id", 0, "Owner id")
+	AlbumsCommand.Flags().BoolVarP(&quiet, "quiet", "q", false, "Print only albums ids")
+	AlbumsCommand.Flags().StringVarP(&format, "format", "f", formatters.Album_format_default, "Print format. Available values: id, title. Mix it in desireble order.")
 }
