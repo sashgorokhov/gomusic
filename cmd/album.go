@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"github.com/sashgorokhov/gomusic/formatters"
 	"strconv"
+	"os"
+	"github.com/sashgorokhov/gomusic/utils"
 )
 
 var AlbumsCommand = &cobra.Command{
@@ -15,6 +17,11 @@ var AlbumsCommand = &cobra.Command{
 	Long: `List albums`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var album_list structs.AlbumResponse
+		api, err := utils.Auth_by_flags(cmd)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		params := map[string]string{
 			"count": strconv.Itoa(count),
 			"offset": strconv.Itoa(offset),
@@ -22,7 +29,7 @@ var AlbumsCommand = &cobra.Command{
 		if owner_id != 0 {
 			params["owner_id"] = strconv.Itoa(owner_id)
 		}
-		err := Api.StructRequest("audio.getAlbums", params, &album_list)
+		err = api.StructRequest("audio.getAlbums", params, &album_list)
 		if err != nil {
 			log.Fatalln(err)
 		}
