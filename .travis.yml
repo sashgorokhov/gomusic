@@ -2,20 +2,19 @@ language: go
 sudo: false
 go:
   - 1.6.2
-os:
-  - linux
-  - windows
-#  - osx
-env:
-- BIN_POSTFIX=$(test "$TRAVIS_OS_NAME" == "windows" && echo ".exe")
 script:
   - go get -t -v ./...
-  - go build -o gomusic$BINPOSTFIX gomusic.go
+  - go get github.com/mitchellh/gox
+  - go install github.com/mitchellh/gox
+  - gox -os "linux windows" -arch="amd64 386" -output="binaries/{{.OS}}/{{.Arch}}/gomusic"
+  - zip -r binaries.zip build
 deploy:
   provider: releases
   api_key: $GITHUB_API_KEY
   file:
-    - gomusic$BINPOSTFIX
+    - binaries.zip
+    - binaries/windows/amd64/gomusic.exe
+    - binaries/linux/amd64/gomusic
   skip_cleanup: true
   on:
     tags: true
