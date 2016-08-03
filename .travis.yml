@@ -8,12 +8,12 @@ os:
   - windows
 script:
   - go get -t -v ./...
-  - go build gomusic.go
+  - go build -o gomusic-${TRAVIS_OS_NAME} gomusic.go
 deploy:
   provider: releases
   api_key: "f523aec9536b34fc249c73249d048ff1d0587a69"
   file:
-    - gomusic
+    - gomusic-${TRAVIS_OS_NAME}
   skip_cleanup: true
   on:
     tags: true
