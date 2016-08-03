@@ -17,10 +17,7 @@ func Format_audio_filename(audio *structs.Audio, replace_chars bool) string {
 	return format_audio_title(audio.Artist, audio.Title, replace_chars) + ".mp3"
 }
 
-func Format_audio(audio *structs.Audio, format_string string, quiet bool, replace_chars bool) string {
-	if quiet {
-		return strconv.Itoa(audio.Id)
-	}
+func Format_audio(audio *structs.Audio, format_string string, replace_chars bool) string {
 	if format_string == "" {
 		format_string = Audio_format_default
 	}

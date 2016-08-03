@@ -14,10 +14,7 @@ func format_album_title(title string, replace_chars bool) string {
 	return title
 }
 
-func Format_album(album *structs.Album, format_string string, quiet bool, replace_chars bool) string {
-	if quiet {
-		return strconv.Itoa(album.Id)
-	}
+func Format_album(album *structs.Album, format_string string, replace_chars bool) string {
 	if format_string == "" {
 		format_string = Album_format_default
 	}
