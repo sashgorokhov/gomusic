@@ -1,15 +1,22 @@
 language: go
-sudo: false
+sudo: required
 go:
   - 1.6.2
-script:
+before_install:
+  - sudo apt-get install -y upx-ucl
+install:
   - go get -t -v ./...
   - go get github.com/mitchellh/gox
   - go get github.com/inconshreveable/mousetrap
+  - go get github.com/pwaller/goupx
   - go install github.com/mitchellh/gox
-  - gox -os "linux windows" -output="binaries/{{.OS}}/{{.Arch}}/gomusic"
+script:
+  - gox -os "linux windows" -osarch "amd64 arm 386" -output="binaries/{{.OS}}/{{.Arch}}/gomusic" -ldflags "-s"
+after_success:
   - zip -r gomusic-all.zip binaries
   - tar -cvzf gomusic-all.tar.gz binaries
+  - upx -9 -q binaries/windows/amd64/gomusic.exe
+  - upx -9 -q binaries/linux/amd64/gomusic
   - zip -r gomusic-windows-amd64.zip binaries/windows/amd64/gomusic.exe
   - tar -cvzf gomusic-linux-amd64.tar.gz binaries/linux/amd64/gomusic
 deploy:
