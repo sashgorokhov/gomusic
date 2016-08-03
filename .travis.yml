@@ -4,16 +4,18 @@ go:
   - 1.6.2
 os:
   - linux
-  - osx
   - windows
+#  - osx
 script:
   - go get -t -v ./...
-  - go build -o gomusic-${TRAVIS_OS_NAME} gomusic.go
+  - go build -o gomusic-$TRAVIS_OS_NAME gomusic.go
+before_deploy:
+  - ls
 deploy:
   provider: releases
-  api_key: "f523aec9536b34fc249c73249d048ff1d0587a69"
+  api_key: $GITHUB_API_KEY
   file:
-    - gomusic-${TRAVIS_OS_NAME}
+    - gomusic-$TRAVIS_OS_NAME
   skip_cleanup: true
   on:
     tags: true
