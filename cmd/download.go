@@ -11,6 +11,8 @@ import (
 	"os"
 	"fmt"
 	"github.com/sashgorokhov/gomusic/utils"
+	//"github.com/cheggaaa/pb"
+	//"github.com/sethgrid/multibar"
 )
 
 var skip_error, skip_exists bool
@@ -47,17 +49,17 @@ var DownloadCommand = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
+
+		os.MkdirAll(destination, os.ModeDir)
+
 		for _, v := range audio_list.Response.Items  {
 			filename := make_audio_filename(&v)
+			_, file := path.Split(filename)
 			if _, err := os.Stat(filename); err == nil && skip_exists {
-				fmt.Println("Skipping")
+				fmt.Printf("%s: File exists - Skipping\n", file)
 				continue
 			}
-			_, file := path.Split(filename)
-			pb := utils.ProgressBar{Title:file}
-			pb.Init()
-			err := utils.Download_file(v.CleanUrl(), filename, pb.Update)
-			pb.Finish()
+			err := utils.Download_file(v.CleanUrl(), filename)
 			if err != nil && ! skip_error {
 				panic(err)
 			}
@@ -73,5 +75,7 @@ func init() {
 	DownloadCommand.Flags().BoolVar(&skip_error, "skip_error", true, "Continue downloading if error occured")
 	DownloadCommand.Flags().BoolVar(&skip_exists, "skip_exists", true, "Do not download audio if it is already downloaded")
 	DownloadCommand.Flags().StringVarP(&destination, "destination", "d", "", "Where to save downloads")
+	DownloadCommand.Flags().BoolVar(&replace_chars, "replace_chars", true, "Only allow basic alphabet (rus+eng), digits and some signs.")
+	utils.SetAuthFlags(DownloadCommand)
 
 }

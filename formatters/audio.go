@@ -10,7 +10,7 @@ var Audio_format_choices = []string{"id", "title", "url"}
 const Audio_format_default = "id,url,title"
 
 func format_audio_title(artist, title string, replace_chars bool) string {
-	return artist + " - " + title
+	return strings.TrimSpace(artist) + " - " + strings.TrimSpace(title)
 }
 
 func Format_audio_filename(audio *structs.Audio, replace_chars bool) string {

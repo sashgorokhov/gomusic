@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"io"
 	"os"
+	"github.com/cheggaaa/pb"
+	"path"
 )
 
 
@@ -46,11 +48,17 @@ func (r *CallbackReader) Read(p []byte) (int, error) {
     	return n, err
 }
 
-func Download_file(url string, filename string, callback func (total, done uint64)) error {
+func Download_file(url string, filename string) error {
 	total, err := Download_size(url)
 	if err != nil {
 		return err
 	}
+	_, file := path.Split(filename)
+
+	bar := pb.New(int(total))
+	bar.Prefix(file)
+	bar.SetUnits(pb.U_BYTES)
+	bar.Start()
 
 	out, err := os.Create(filename)
 	if err != nil {
@@ -64,11 +72,7 @@ func Download_file(url string, filename string, callback func (total, done uint6
 	}
 	defer resp.Body.Close()
 
-	callback_reader := CallbackReader{
-		reader:resp.Body,
-		callback: callback,
-		total: total,
-	}
-	_, err = io.Copy(out, &callback_reader)
+	_, err = io.Copy(out, bar.NewProxyReader(resp.Body))
+	bar.Finish()
 	return err
 }
