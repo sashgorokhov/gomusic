@@ -6,16 +6,16 @@ os:
   - linux
   - windows
 #  - osx
+env:
+- BIN_POSTFIX=$(test "$TRAVIS_OS_NAME" == "windows" && echo ".exe")
 script:
   - go get -t -v ./...
-  - go build -o gomusic-$TRAVIS_OS_NAME gomusic.go
-before_deploy:
-  - ls
+  - go build -o gomusic$BINPOSTFIX gomusic.go
 deploy:
   provider: releases
   api_key: $GITHUB_API_KEY
   file:
-    - gomusic-$TRAVIS_OS_NAME
+    - gomusic$BINPOSTFIX
   skip_cleanup: true
   on:
     tags: true
