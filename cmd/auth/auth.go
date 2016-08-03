@@ -27,10 +27,7 @@ var AuthCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		login, _ := cmd.Flags().GetString("login")
 		password, _ := cmd.Flags().GetString("password")
-		auth_code, err := cmd.Flags().GetInt("auth_code")
-		if err != nil {
-			auth_code = 0
-		}
+		auth_code, _ := cmd.Flags().GetString("auth_code")
 		api, err := utils.Auth_by_login_and_password(login, password, auth_code, false)
 		if err != nil {
 			fmt.Println(err)
@@ -45,5 +42,5 @@ func init() {
 	AuthCommand.AddCommand(SetCommand)
 	AuthCommand.Flags().StringP("login", "l", "", "Login")
 	AuthCommand.Flags().StringP("password", "p", "", "Password")
-	AuthCommand.Flags().IntP("auth_code", "c", 0, "Auth code for two-factor auth")
+	AuthCommand.Flags().StringP("auth_code", "c", "", "Auth code for two-factor auth")
 }
