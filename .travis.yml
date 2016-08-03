@@ -1,8 +1,19 @@
 language: go
 sudo: false
 go:
-- 1.6.2
+  - 1.6.2
 os:
-- linux
-- osx
-- windows
+  - linux
+  - osx
+  - windows
+script:
+  - go get -t -v ./...
+  - go build gomusic.go
+deploy:
+  provider: releases
+  api_key: "f523aec9536b34fc249c73249d048ff1d0587a69"
+  file:
+    - gomusic
+  skip_cleanup: true
+  on:
+    tags: true
