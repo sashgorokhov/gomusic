@@ -11,7 +11,7 @@ install:
   - go get github.com/pwaller/goupx
   - go install github.com/mitchellh/gox
 script:
-  - gox -os "linux windows" -osarch "amd64 arm 386" -output="binaries/{{.OS}}/{{.Arch}}/gomusic" -ldflags "-s"
+  - gox -os "linux windows" -arch "amd64 386" -output="binaries/{{.OS}}/{{.Arch}}/gomusic" -ldflags "-s -w"
 after_success:
   - zip -r gomusic-all.zip binaries
   - tar -cvzf gomusic-all.tar.gz binaries
