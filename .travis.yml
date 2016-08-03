@@ -7,15 +7,19 @@ script:
   - go get github.com/mitchellh/gox
   - go get github.com/inconshreveable/mousetrap
   - go install github.com/mitchellh/gox
-  - gox -os "linux windows" -arch="amd64 386" -output="binaries/{{.OS}}/{{.Arch}}/gomusic"
-  - zip -r binaries.zip binaries
+  - gox -os "linux windows" -output="binaries/{{.OS}}/{{.Arch}}/gomusic"
+  - zip -r gomusic-all.zip binaries
+  - tar -cvzf gomusic-all.tar.gz binaries
+  - zip -r gomusic-windows-amd64.zip binaries/windows/amd64/gomusic.exe
+  - tar -cvzf gomusic-linux-amd64.tar.gz binaries/linux/amd64/gomusic
 deploy:
   provider: releases
   api_key: $GITHUB_API_KEY
   file:
-    - binaries.zip
-    - binaries/windows/amd64/gomusic.exe
-    - binaries/linux/amd64/gomusic
+    - gomusic-all.zip
+    - gomusic-all.tar.gz
+    - gomusic-windows-amd64.zip
+    - gomusic-linux-amd64.tar.gz
   skip_cleanup: true
   on:
     tags: true
