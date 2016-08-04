@@ -48,4 +48,5 @@ func init() {
 	AlbumsCommand.Flags().IntVar(&owner_id, "owner_id", 0, "Owner id")
 	AlbumsCommand.Flags().BoolVarP(&quiet, "quiet", "q", false, "Print only albums ids. Equal to --format=id")
 	AlbumsCommand.Flags().StringVarP(&format, "format", "f", formatters.Album_format_default, "Print format. Available values: id, title. Mix it in desireble order.")
+	utils.SetAuthFlags(AlbumsCommand)
 }

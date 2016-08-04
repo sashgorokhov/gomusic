@@ -8,7 +8,7 @@ import (
 )
 
 const CLIENT_ID int = 5416726
-var SCOPE = []string{"audio"}
+var SCOPE = []string{"audio", "friends", "groups"}
 
 
 var PERSISTENT_TOKEN_FILENAME string
