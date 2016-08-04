@@ -18,7 +18,7 @@ var destination string
 
 
 func make_audio_filename(audio *structs.Audio) string {
-	return path.Join(filepath.ToSlash(destination), formatters.Format_audio_filename(audio, true))
+	return path.Join(filepath.ToSlash(destination), formatters.Format_audio_filename(audio))
 }
 
 
