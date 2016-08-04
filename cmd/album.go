@@ -37,7 +37,7 @@ var AlbumsCommand = &cobra.Command{
 			format = "id"
 		}
 		for _, v := range album_list.Response.Items  {
-			fmt.Println(formatters.Format_album(&v, format, replace_chars))
+			fmt.Println(formatters.Format_album(&v, format))
 		}
 	},
 }

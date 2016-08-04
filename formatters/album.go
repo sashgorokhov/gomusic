@@ -10,11 +10,11 @@ import (
 var Album_format_choices = []string{"id", "title"}
 const Album_format_default = "id,title"
 
-func format_album_title(title string, replace_chars bool) string {
+func format_album_title(title string) string {
 	return title
 }
 
-func Format_album(album *structs.Album, format_string string, replace_chars bool) string {
+func Format_album(album *structs.Album, format_string string) string {
 	if format_string == "" {
 		format_string = Album_format_default
 	}
@@ -25,7 +25,7 @@ func Format_album(album *structs.Album, format_string string, replace_chars bool
 				colums = append(colums, strconv.Itoa(album.Id))
 			}
 			case v == "title": {
-				colums = append(colums, format_album_title(album.Title, replace_chars))
+				colums = append(colums, format_album_title(album.Title))
 			}
 		}
 	}

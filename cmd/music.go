@@ -12,7 +12,7 @@ import (
 )
 
 var offset, count, owner_id, album_id int
-var quiet, replace_chars bool
+var quiet bool
 var format string
 
 
@@ -45,7 +45,7 @@ var MusicCommand = &cobra.Command{
 			format = "id"
 		}
 		for _, v := range audio_list.Response.Items  {
-			fmt.Println(formatters.Format_audio(&v, format, replace_chars))
+			fmt.Println(formatters.Format_audio(&v, format))
 		}
 	},
 }
@@ -58,6 +58,5 @@ func init() {
 	MusicCommand.Flags().IntVar(&album_id, "album_id", 0, "Album id")
 	MusicCommand.Flags().BoolVarP(&quiet, "quiet", "q", false, "Print only audio ids. Equal to --format=id")
 	MusicCommand.Flags().StringVarP(&format, "format", "f", formatters.Audio_format_default, "Print format. Available values: id, url, title. Mix it in desireble order.")
-	MusicCommand.Flags().BoolVar(&replace_chars, "replace_chars", true, "Only allow basic alphabet (rus+eng), digits and some signs.")
 	utils.SetAuthFlags(MusicCommand)
 }

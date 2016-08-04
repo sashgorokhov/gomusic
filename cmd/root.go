@@ -27,4 +27,5 @@ func init() {
 	RootCmd.AddCommand(AlbumsCommand)
 	RootCmd.AddCommand(MusicCommand)
 	RootCmd.AddCommand(FriendsCommand)
+	RootCmd.AddCommand(GroupsCommand)
 }

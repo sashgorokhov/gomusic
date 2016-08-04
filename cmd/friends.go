@@ -37,7 +37,7 @@ var FriendsCommand = &cobra.Command{
 			format = "id"
 		}
 		for _, v := range friend_list.Response.Items  {
-			fmt.Println(formatters.Format_friend(&v, format, replace_chars))
+			fmt.Println(formatters.Format_friend(&v, format))
 		}
 	},
 }

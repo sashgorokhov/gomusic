@@ -11,8 +11,6 @@ import (
 	"os"
 	"fmt"
 	"github.com/sashgorokhov/gomusic/utils"
-	//"github.com/cheggaaa/pb"
-	//"github.com/sethgrid/multibar"
 )
 
 var skip_error, skip_exists bool
@@ -20,7 +18,7 @@ var destination string
 
 
 func make_audio_filename(audio *structs.Audio) string {
-	return path.Join(filepath.ToSlash(destination), formatters.Format_audio_filename(audio, replace_chars))
+	return path.Join(filepath.ToSlash(destination), formatters.Format_audio_filename(audio, true))
 }
 
 
@@ -75,7 +73,6 @@ func init() {
 	DownloadCommand.Flags().BoolVar(&skip_error, "skip_error", true, "Continue downloading if error occured")
 	DownloadCommand.Flags().BoolVar(&skip_exists, "skip_exists", true, "Do not download audio if it is already downloaded")
 	DownloadCommand.Flags().StringVarP(&destination, "destination", "d", "", "Where to save downloads")
-	DownloadCommand.Flags().BoolVar(&replace_chars, "replace_chars", true, "Only allow basic alphabet (rus+eng), digits and some signs.")
 	utils.SetAuthFlags(DownloadCommand)
 
 }
