@@ -16,8 +16,8 @@ after_success:
   - zip -r gomusic-all.zip binaries
   - tar -cvzf gomusic-all.tar.gz binaries
   - upx -9 -q binaries/linux/amd64/gomusic
-  - сp binaries/windows/amd64/gomusic.exe ./
-  - сp binaries/linux/amd64/gomusic ./
+  - cp binaries/windows/amd64/gomusic.exe ./
+  - cp binaries/linux/amd64/gomusic ./
   - zip -r gomusic-windows-amd64.zip gomusic.exe
   - tar -cvzf gomusic-linux-amd64.tar.gz gomusic
 deploy:
