@@ -1,31 +1,29 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/sashgorokhov/gomusic/structs"
-	"log"
-	"strconv"
-	"path/filepath"
-	"path"
-	"github.com/sashgorokhov/gomusic/formatters"
-	"os"
 	"fmt"
+	"github.com/sashgorokhov/gomusic/formatters"
+	"github.com/sashgorokhov/gomusic/structs"
 	"github.com/sashgorokhov/gomusic/utils"
+	"github.com/sashgorokhov/govk"
+	"github.com/spf13/cobra"
+	"os"
+	"path"
+	"path/filepath"
+	"strconv"
 )
 
 var skip_error, skip_exists bool
 var destination string
 
-
 func make_audio_filename(audio *structs.Audio) string {
 	return path.Join(filepath.ToSlash(destination), formatters.Format_audio_filename(audio))
 }
 
-
 var DownloadCommand = &cobra.Command{
 	Use:   "download",
 	Short: "Music download",
-	Long: `Music download`,
+	Long:  `Music download`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var audio_list structs.AudioResponse
 		api, err := utils.Auth_by_flags(cmd)
@@ -34,7 +32,7 @@ var DownloadCommand = &cobra.Command{
 			os.Exit(1)
 		}
 		params := map[string]string{
-			"count": strconv.Itoa(count),
+			"count":  strconv.Itoa(count),
 			"offset": strconv.Itoa(offset),
 		}
 		if owner_id != 0 {
@@ -45,12 +43,16 @@ var DownloadCommand = &cobra.Command{
 		}
 		err = api.StructRequest("audio.get", params, &audio_list)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			if error_struct, ok := err.(govk.ResponseError); ok {
+				fmt.Printf("%+v\n", error_struct.ErrorStruct)
+			}
+			os.Exit(1)
 		}
 
 		os.MkdirAll(destination, os.ModeDir)
 
-		for _, v := range audio_list.Response.Items  {
+		for _, v := range audio_list.Response.Items {
 			filename := make_audio_filename(&v)
 			_, file := path.Split(filename)
 			if _, err := os.Stat(filename); err == nil && skip_exists {
@@ -58,7 +60,7 @@ var DownloadCommand = &cobra.Command{
 				continue
 			}
 			err := utils.Download_file(v.CleanUrl(), filename)
-			if err != nil && ! skip_error {
+			if err != nil && !skip_error {
 				panic(err)
 			}
 		}

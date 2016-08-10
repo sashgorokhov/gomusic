@@ -1,20 +1,20 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/sashgorokhov/gomusic/structs"
-	"log"
 	"fmt"
 	"github.com/sashgorokhov/gomusic/formatters"
-	"strconv"
-	"os"
+	"github.com/sashgorokhov/gomusic/structs"
 	"github.com/sashgorokhov/gomusic/utils"
+	"github.com/sashgorokhov/govk"
+	"github.com/spf13/cobra"
+	"os"
+	"strconv"
 )
 
 var AlbumsCommand = &cobra.Command{
 	Use:   "albums",
 	Short: "List albums",
-	Long: `List albums`,
+	Long:  `List albums`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var album_list structs.AlbumResponse
 		api, err := utils.Auth_by_flags(cmd)
@@ -23,7 +23,7 @@ var AlbumsCommand = &cobra.Command{
 			os.Exit(1)
 		}
 		params := map[string]string{
-			"count": strconv.Itoa(count),
+			"count":  strconv.Itoa(count),
 			"offset": strconv.Itoa(offset),
 		}
 		if owner_id != 0 {
@@ -31,12 +31,16 @@ var AlbumsCommand = &cobra.Command{
 		}
 		err = api.StructRequest("audio.getAlbums", params, &album_list)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			if error_struct, ok := err.(govk.ResponseError); ok {
+				fmt.Printf("%+v\n", error_struct.ErrorStruct)
+			}
+			os.Exit(1)
 		}
 		if quiet {
 			format = "id"
 		}
-		for _, v := range album_list.Response.Items  {
+		for _, v := range album_list.Response.Items {
 			fmt.Println(formatters.Format_album(&v, format))
 		}
 	},

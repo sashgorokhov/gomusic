@@ -1,25 +1,24 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"fmt"
-	"github.com/sashgorokhov/gomusic/structs"
-	"log"
 	"github.com/sashgorokhov/gomusic/formatters"
-	"strconv"
+	"github.com/sashgorokhov/gomusic/structs"
 	"github.com/sashgorokhov/gomusic/utils"
+	"github.com/sashgorokhov/govk"
+	"github.com/spf13/cobra"
 	"os"
+	"strconv"
 )
 
 var offset, count, owner_id, album_id int
 var quiet bool
 var format string
 
-
 var MusicCommand = &cobra.Command{
 	Use:   "music",
 	Short: "List music",
-	Long: `List music`,
+	Long:  `List music`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var audio_list structs.AudioResponse
 		api, err := utils.Auth_by_flags(cmd)
@@ -28,7 +27,7 @@ var MusicCommand = &cobra.Command{
 			os.Exit(1)
 		}
 		params := map[string]string{
-			"count": strconv.Itoa(count),
+			"count":  strconv.Itoa(count),
 			"offset": strconv.Itoa(offset),
 		}
 		if owner_id != 0 {
@@ -39,12 +38,16 @@ var MusicCommand = &cobra.Command{
 		}
 		err = api.StructRequest("audio.get", params, &audio_list)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			if error_struct, ok := err.(govk.ResponseError); ok {
+				fmt.Printf("%+v\n", error_struct.ErrorStruct)
+			}
+			os.Exit(1)
 		}
 		if quiet {
 			format = "id"
 		}
-		for _, v := range audio_list.Response.Items  {
+		for _, v := range audio_list.Response.Items {
 			fmt.Println(formatters.Format_audio(&v, format))
 		}
 	},
@@ -57,6 +60,6 @@ func init() {
 	MusicCommand.Flags().IntVar(&owner_id, "owner_id", 0, "Owner id")
 	MusicCommand.Flags().IntVar(&album_id, "album_id", 0, "Album id")
 	MusicCommand.Flags().BoolVarP(&quiet, "quiet", "q", false, "Print only audio ids. Equal to --format=id")
-	MusicCommand.Flags().StringVarP(&format, "format", "f", formatters.Audio_format_default, "Print format. Available values: id, url, title. Mix it in desireble order.")
+	MusicCommand.Flags().StringVarP(&format, "format", "f", formatters.Audio_format_default, "Print format. Available values: id, url, title. Mix it in desirable order.")
 	utils.SetAuthFlags(MusicCommand)
 }
