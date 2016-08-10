@@ -34,7 +34,7 @@ var FriendsCommand = &cobra.Command{
 			if error_struct, ok := err.(govk.ResponseError); ok {
 				fmt.Printf("%+v\n", error_struct.ErrorStruct)
 			}
-			os.Exit(1)
+			os.Exit(2)
 		}
 		format, _ := cmd.Flags().GetString("format")
 		if quiet {
