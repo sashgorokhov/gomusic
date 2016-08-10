@@ -1,11 +1,12 @@
 package utils
 
 import (
-	"os"
-	"io/ioutil"
-	"github.com/sashgorokhov/govk"
 	"encoding/json"
+	"github.com/sashgorokhov/govk"
+	"io/ioutil"
+	"os"
 	"path"
+	"time"
 )
 
 type persistent_token map[string]govk.AuthInfo
@@ -15,7 +16,6 @@ func persistent_token_file_exists() bool {
 	return err == nil
 }
 
-
 func create_persistent_token_file() error {
 	err := os.MkdirAll(path.Dir(PERSISTENT_TOKEN_FILENAME), os.ModePerm)
 	if err != nil {
@@ -23,7 +23,6 @@ func create_persistent_token_file() error {
 	}
 	return ioutil.WriteFile(PERSISTENT_TOKEN_FILENAME, []byte("{}"), os.ModePerm)
 }
-
 
 func read_persistent_token_file() (persistent_token, error) {
 	var persistent_token_value persistent_token
@@ -40,12 +39,11 @@ func read_persistent_token_file() (persistent_token, error) {
 	return persistent_token_value, nil
 }
 
-
 func Add(login string, auth_info *govk.AuthInfo) error {
 	var persistent_token_value persistent_token
 	var err error
 
-	if ! persistent_token_file_exists() {
+	if !persistent_token_file_exists() {
 		err = create_persistent_token_file()
 		if err != nil {
 			return err
@@ -67,9 +65,8 @@ func Add(login string, auth_info *govk.AuthInfo) error {
 	return ioutil.WriteFile(PERSISTENT_TOKEN_FILENAME, contents, os.ModePerm)
 }
 
-
 func Get(login string) (*govk.AuthInfo, bool) {
-	if ! persistent_token_file_exists() {
+	if !persistent_token_file_exists() {
 		return nil, false
 	}
 	persistent_token_value, err := read_persistent_token_file()
@@ -77,5 +74,11 @@ func Get(login string) (*govk.AuthInfo, bool) {
 		return nil, false
 	}
 	v, ok := persistent_token_value[login]
+	if !ok {
+		return nil, false
+	}
+	if time.Now().After(v.Expires_at) {
+		return nil, false
+	}
 	return &v, ok
 }
