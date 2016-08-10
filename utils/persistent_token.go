@@ -55,6 +55,11 @@ func Add(login string, auth_info *govk.AuthInfo) error {
 			return err
 		}
 	}
+	encrypted, err := EncryptToken(auth_info.Access_token)
+	if err != nil {
+		return err
+	}
+	auth_info.Access_token = encrypted
 	persistent_token_value[login] = *auth_info
 
 	contents, err := json.Marshal(&persistent_token_value)
@@ -80,5 +85,10 @@ func Get(login string) (*govk.AuthInfo, bool) {
 	if time.Now().After(v.Expires_at) {
 		return nil, false
 	}
+	decrypted, err := DecryptToken(v.Access_token)
+	if err != nil {
+		return nil, false
+	}
+	v.Access_token = decrypted
 	return &v, ok
 }

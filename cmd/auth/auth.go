@@ -1,17 +1,16 @@
 package auth
 
 import (
-	"github.com/spf13/cobra"
 	"fmt"
-	"os"
 	"github.com/sashgorokhov/gomusic/utils"
+	"github.com/spf13/cobra"
+	"os"
 )
-
 
 var AuthCommand = &cobra.Command{
 	Use:   "auth -l <login> -p <password> [-c <auth_code>]",
 	Short: "Authenticate user and print access token",
-	Long: `Long help`,
+	Long:  `Long help`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		_, err = cmd.Flags().GetString("login")
@@ -33,7 +32,12 @@ var AuthCommand = &cobra.Command{
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		fmt.Println(api.Access_token)
+		decrypted, err := utils.DecryptToken(api.Access_token)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		fmt.Println(decrypted)
 	},
 }
 
