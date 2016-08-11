@@ -1,8 +1,10 @@
-package utils
+package persistent_token
 
 import (
-	"encoding/json"
+	"github.com/sashgorokhov/gomusic/utils"
+	"github.com/sashgorokhov/gomusic/utils/crypt"
 	"github.com/sashgorokhov/govk"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path"
@@ -12,25 +14,25 @@ import (
 type persistent_token map[string]govk.AuthInfo
 
 func persistent_token_file_exists() bool {
-	return FileExists(PERSISTENT_TOKEN_FILENAME)
+	return utils.FileExists(utils.PERSISTENT_TOKEN_FILENAME)
 }
 
 func create_persistent_token_file() error {
-	err := os.MkdirAll(path.Dir(PERSISTENT_TOKEN_FILENAME), os.ModePerm)
+	err := os.MkdirAll(path.Dir(utils.PERSISTENT_TOKEN_FILENAME), os.ModePerm)
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(PERSISTENT_TOKEN_FILENAME, []byte("{}"), os.ModePerm)
+	return ioutil.WriteFile(utils.PERSISTENT_TOKEN_FILENAME, []byte(""), os.ModePerm)
 }
 
 func read_persistent_token_file() (persistent_token, error) {
 	var persistent_token_value persistent_token
 	if persistent_token_file_exists() {
-		contents, err := ioutil.ReadFile(PERSISTENT_TOKEN_FILENAME)
+		contents, err := ioutil.ReadFile(utils.PERSISTENT_TOKEN_FILENAME)
 		if err != nil {
 			return nil, err
 		}
-		err = json.Unmarshal(contents, &persistent_token_value)
+		err = yaml.Unmarshal(contents, &persistent_token_value)
 		if err != nil {
 			return nil, err
 		}
@@ -54,19 +56,19 @@ func Add(login string, auth_info *govk.AuthInfo) error {
 			return err
 		}
 	}
-	encrypted, err := EncryptToken(auth_info.Access_token)
+	encrypted, err := crypt.EncryptToken(auth_info.Access_token)
 	if err != nil {
 		return err
 	}
 	auth_info.Access_token = encrypted
 	persistent_token_value[login] = *auth_info
 
-	contents, err := json.Marshal(&persistent_token_value)
+	contents, err := yaml.Marshal(&persistent_token_value)
 	if err != nil {
 		return err
 	}
 
-	return ioutil.WriteFile(PERSISTENT_TOKEN_FILENAME, contents, os.ModePerm)
+	return ioutil.WriteFile(utils.PERSISTENT_TOKEN_FILENAME, contents, os.ModePerm)
 }
 
 func Get(login string) (*govk.AuthInfo, bool) {
@@ -84,7 +86,7 @@ func Get(login string) (*govk.AuthInfo, bool) {
 	if time.Now().After(v.Expires_at) {
 		return nil, false
 	}
-	decrypted, err := DecryptToken(v.Access_token)
+	decrypted, err := crypt.DecryptToken(v.Access_token)
 	if err != nil {
 		return nil, false
 	}

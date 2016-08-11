@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/sashgorokhov/gomusic/cmd/utils/auth"
 	"github.com/sashgorokhov/gomusic/formatters"
 	"github.com/sashgorokhov/gomusic/structs"
-	"github.com/sashgorokhov/gomusic/utils"
 	"github.com/sashgorokhov/govk"
 	"github.com/spf13/cobra"
 	"os"
@@ -21,7 +21,7 @@ var MusicCommand = &cobra.Command{
 	Long:  `List music`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var audio_list structs.AudioResponse
-		api, err := utils.Auth_by_flags(cmd)
+		api, err := auth.Authenticate(cmd)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -61,5 +61,5 @@ func init() {
 	MusicCommand.Flags().IntVar(&album_id, "album_id", 0, "Album id")
 	MusicCommand.Flags().BoolVarP(&quiet, "quiet", "q", false, "Print only audio ids. Equal to --format=id")
 	MusicCommand.Flags().StringVarP(&format, "format", "f", formatters.Audio_format_default, "Print format. Available values: id, url, title. Mix it in desirable order.")
-	utils.SetAuthFlags(MusicCommand)
+	auth.SetAuthFlags(MusicCommand)
 }
