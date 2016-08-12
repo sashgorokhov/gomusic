@@ -7,6 +7,7 @@ import (
 )
 
 var Audio_format_choices = []string{"id", "title", "url"}
+
 const Audio_format_default = "id,url,title"
 
 func format_audio_title(artist, title string) string {
@@ -23,14 +24,17 @@ func Format_audio(audio *structs.Audio, format_string string) string {
 	}
 	var colums []string
 	for _, v := range strings.Split(format_string, ",") {
-		switch  {
-			case v == "id": {
-				colums = append(colums, strconv.Itoa(audio.Id))
+		switch {
+		case v == "id":
+			{
+				colums = append(colums, strconv.Itoa(int(audio.Id)))
 			}
-			case v == "title": {
+		case v == "title":
+			{
 				colums = append(colums, format_audio_title(audio.Artist, audio.Title))
 			}
-			case v == "url": {
+		case v == "url":
+			{
 				colums = append(colums, audio.CleanUrl())
 			}
 		}

@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/sashgorokhov/gomusic/cmd/utils/auth"
 	"github.com/sashgorokhov/gomusic/formatters"
 	"github.com/sashgorokhov/gomusic/structs"
-	"github.com/sashgorokhov/gomusic/utils"
 	"github.com/sashgorokhov/govk"
 	"github.com/spf13/cobra"
 	"os"
@@ -17,7 +17,7 @@ var FriendsCommand = &cobra.Command{
 	Long:  `List friends`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var friend_list structs.FriendResponse
-		api, err := utils.Auth_by_flags(cmd)
+		api, err := auth.Authenticate(cmd)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -51,5 +51,5 @@ func init() {
 	FriendsCommand.Flags().IntVarP(&count, "count", "c", 50, "How many friends to fetch. Specify -1 to show all available (offset also works here).")
 	FriendsCommand.Flags().BoolVarP(&quiet, "quiet", "q", false, "Print only friends ids. Equal to --format=id")
 	FriendsCommand.Flags().StringP("format", "f", formatters.Friend_format_default, "Print format. Available values: id, name. Mix it in desireble order.")
-	utils.SetAuthFlags(FriendsCommand)
+	auth.SetAuthFlags(FriendsCommand)
 }

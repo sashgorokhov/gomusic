@@ -1,13 +1,12 @@
 package structs
 
-
 type Album struct {
-	Id int `json:"id"`
-	Title string `json:"title"`
+	Id    float64 `json:"id"`
+	Title string  `json:"title"`
 }
 
 type AlbumResponseList struct {
-	Count int `json:"count"`
+	Count int     `json:"count"`
 	Items []Album `json:"items"`
 }
 

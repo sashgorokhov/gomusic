@@ -15,8 +15,8 @@ var offset, count, owner_id, album_id int
 var quiet bool
 var format string
 
-var MusicCommand = &cobra.Command{
-	Use:   "music",
+var ListCommand = &cobra.Command{
+	Use:   "list",
 	Short: "List music",
 	Long:  `List music`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -54,12 +54,11 @@ var MusicCommand = &cobra.Command{
 }
 
 func init() {
-	MusicCommand.AddCommand(DownloadCommand)
-	MusicCommand.Flags().IntVar(&offset, "offset", 0, "Offset")
-	MusicCommand.Flags().IntVarP(&count, "count", "c", 50, "How many audios to fetch. TODO: Specify -1 to show all available (offset also works here).")
-	MusicCommand.Flags().IntVar(&owner_id, "owner_id", 0, "Owner id")
-	MusicCommand.Flags().IntVar(&album_id, "album_id", 0, "Album id")
-	MusicCommand.Flags().BoolVarP(&quiet, "quiet", "q", false, "Print only audio ids. Equal to --format=id")
-	MusicCommand.Flags().StringVarP(&format, "format", "f", formatters.Audio_format_default, "Print format. Available values: id, url, title. Mix it in desirable order.")
-	auth.SetAuthFlags(MusicCommand)
+	ListCommand.Flags().IntVar(&offset, "offset", 0, "Offset")
+	ListCommand.Flags().IntVarP(&count, "count", "c", 50, "How many audios to fetch. TODO: Specify -1 to show all available (offset also works here).")
+	ListCommand.Flags().IntVar(&owner_id, "owner_id", 0, "Owner id")
+	ListCommand.Flags().IntVar(&album_id, "album_id", 0, "Album id")
+	ListCommand.Flags().BoolVarP(&quiet, "quiet", "q", false, "Print only audio ids. Equal to --format=id")
+	ListCommand.Flags().StringVarP(&format, "format", "f", formatters.Audio_format_default, "Print format. Available values: id, url, title. Mix it in desirable order.")
+	auth.SetAuthFlags(ListCommand)
 }

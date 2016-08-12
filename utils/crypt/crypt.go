@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
+	"github.com/sashgorokhov/gomusic/utils"
 	"io"
 	"strconv"
 	"strings"
@@ -48,7 +49,7 @@ func decrypt(key, text []byte) ([]byte, error) {
 }
 
 func get_key() []byte {
-	client_id := strconv.Itoa(CLIENT_ID)
+	client_id := strconv.Itoa(utils.CLIENT_ID)
 	return []byte(strings.Repeat(client_id, 16/len(client_id)+1)[:16])
 }
 

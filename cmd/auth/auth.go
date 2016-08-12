@@ -2,49 +2,27 @@ package auth
 
 import (
 	"fmt"
-	"github.com/sashgorokhov/gomusic/utils"
+	"github.com/sashgorokhov/gomusic/cmd/utils/auth"
 	"github.com/spf13/cobra"
 	"os"
 )
 
 var AuthCommand = &cobra.Command{
-	Use:   "auth -l <login> -p <password> [-c <auth_code>]",
+	Use:   "auth",
 	Short: "Authenticate user and print access token",
 	Long:  `Long help`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		var err error
-		_, err = cmd.Flags().GetString("login")
-		if err != nil {
-			return err
-		}
-		_, err = cmd.Flags().GetString("password")
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Run: func(cmd *cobra.Command, args []string) {
-		login, _ := cmd.Flags().GetString("login")
-		password, _ := cmd.Flags().GetString("password")
-		auth_code, _ := cmd.Flags().GetString("auth_code")
-		api, err := utils.Auth_by_login_and_password(login, password, auth_code, false)
+		api, err := auth.Authenticate(cmd)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		decrypted, err := utils.DecryptToken(api.Access_token)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		fmt.Println(decrypted)
+		fmt.Println(api.Access_token)
 	},
 }
 
 func init() {
 	AuthCommand.AddCommand(ManualCommand)
-	AuthCommand.AddCommand(SetCommand)
-	AuthCommand.Flags().StringP("login", "l", "", "Login")
-	AuthCommand.Flags().StringP("password", "p", "", "Password")
-	AuthCommand.Flags().StringP("auth_code", "c", "", "Auth code for two-factor auth")
+	//AuthCommand.AddCommand(SetCommand)
+	auth.SetAuthFlags(AuthCommand)
 }

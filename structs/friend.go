@@ -1,14 +1,13 @@
 package structs
 
-
 type Friend struct {
-	Id int `json:"id"`
-	First_name string `json:"first_name"`
-	Last_name string `json:"last_name"`
+	Id         float64 `json:"id"`
+	First_name string  `json:"first_name"`
+	Last_name  string  `json:"last_name"`
 }
 
 type FriendResponseList struct {
-	Count int `json:"count"`
+	Count int      `json:"count"`
 	Items []Friend `json:"items"`
 }
 

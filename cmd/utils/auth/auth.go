@@ -7,7 +7,6 @@ import (
 	"github.com/pquerna/otp/totp"
 	"github.com/sashgorokhov/gomusic/cmd/utils/auth/persistent_token"
 	"github.com/sashgorokhov/gomusic/utils"
-	"github.com/sashgorokhov/gomusic/utils/hidden_string"
 	"github.com/sashgorokhov/govk"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -18,10 +17,10 @@ import (
 
 type AuthFlags struct {
 	Login        string
-	Password     hidden_string.HiddenString
+	Password     string
 	Access_token string
 	Auth_code    string
-	Auth_secret  hidden_string.HiddenString
+	Auth_secret  string
 	Cfile        string
 	Reuse_token  bool
 }
@@ -97,10 +96,7 @@ func AuthByLoginAndPassword(login, password, auth_code, auth_secret string, reus
 	logger.Infoln("Authenticating by login and password")
 	var auth_info *govk.AuthInfo
 	if reuse_token {
-		auth_info, err = persistent_token.Get(login)
-		if err != nil {
-			logger.WithField("err", err).Warningln("Error getting persistent token")
-		}
+		auth_info, _ = persistent_token.Get(login)
 	}
 	if auth_info == nil {
 		if auth_secret != "" && auth_code == "" {

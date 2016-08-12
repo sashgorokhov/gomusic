@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/sashgorokhov/gomusic/cmd/utils/auth"
 	"github.com/sashgorokhov/gomusic/formatters"
 	"github.com/sashgorokhov/gomusic/structs"
-	"github.com/sashgorokhov/gomusic/utils"
 	"github.com/sashgorokhov/govk"
 	"github.com/spf13/cobra"
 	"os"
@@ -17,7 +17,7 @@ var GroupsCommand = &cobra.Command{
 	Long:  `List groups`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var group_list structs.GroupResponse
-		api, err := utils.Auth_by_flags(cmd)
+		api, err := auth.Authenticate(cmd)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -50,5 +50,5 @@ func init() {
 	GroupsCommand.Flags().IntVarP(&count, "count", "c", 50, "How many groups to fetch. Specify -1 to show all available (offset also works here).")
 	GroupsCommand.Flags().BoolVarP(&quiet, "quiet", "q", false, "Print only groups ids. Equal to --format=id")
 	GroupsCommand.Flags().StringP("format", "f", formatters.Group_format_default, "Print format. Available values: id, name. Mix it in desireble order.")
-	utils.SetAuthFlags(GroupsCommand)
+	auth.SetAuthFlags(GroupsCommand)
 }

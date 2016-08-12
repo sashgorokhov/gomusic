@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/sashgorokhov/gomusic/cmd/utils/auth"
 	"github.com/sashgorokhov/gomusic/formatters"
 	"github.com/sashgorokhov/gomusic/structs"
 	"github.com/sashgorokhov/gomusic/utils"
@@ -26,7 +27,7 @@ var DownloadCommand = &cobra.Command{
 	Long:  `Music download`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var audio_list structs.AudioResponse
-		api, err := utils.Auth_by_flags(cmd)
+		api, err := auth.Authenticate(cmd)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -75,6 +76,6 @@ func init() {
 	DownloadCommand.Flags().BoolVar(&skip_error, "skip_error", true, "Continue downloading if error occured")
 	DownloadCommand.Flags().BoolVar(&skip_exists, "skip_exists", true, "Do not download audio if it is already downloaded")
 	DownloadCommand.Flags().StringVarP(&destination, "destination", "d", "", "Where to save downloads")
-	utils.SetAuthFlags(DownloadCommand)
+	auth.SetAuthFlags(DownloadCommand)
 
 }
