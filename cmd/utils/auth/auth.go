@@ -84,7 +84,7 @@ func GetAuthFlags(cmd *cobra.Command) (*AuthFlags, error) {
 }
 
 func AuthByAccessToken(access_token string) (*govk.Api, error) {
-	logger.WithField("access_token", access_token).Infoln("Authenticated by access token")
+	logger.Infoln("Authenticating by access token")
 	return govk.NewApi(access_token), nil
 }
 

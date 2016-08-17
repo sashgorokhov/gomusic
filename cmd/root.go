@@ -27,4 +27,5 @@ func init() {
 	RootCmd.AddCommand(FriendsCommand)
 	RootCmd.AddCommand(GroupsCommand)
 	RootCmd.AddCommand(DownloadCommand)
+	RootCmd.AddCommand(CleanlogCommand)
 }
