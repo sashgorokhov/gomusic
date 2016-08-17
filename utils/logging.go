@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 )
 
 var GomusicLogger = (&logrus.Logger{
@@ -35,6 +36,7 @@ func GetAllLoggers() []*logrus.Logger {
 func SetupLogging() func() {
 	all_loggers := GetAllLoggers()
 
+	os.MkdirAll(path.Dir(LOG_FILENAME), os.ModePerm)
 	file, err := os.OpenFile(LOG_FILENAME, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
 
 	if err != nil {

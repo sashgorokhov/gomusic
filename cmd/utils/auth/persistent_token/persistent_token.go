@@ -17,11 +17,14 @@ func persistent_token_file_exists() bool {
 	return utils.FileExists(utils.PERSISTENT_TOKEN_FILENAME)
 }
 
+var logger = utils.GomusicLogger.WithField("prefix", "gomusic.persistent_token")
+
 func create_persistent_token_file() error {
 	err := os.MkdirAll(path.Dir(utils.PERSISTENT_TOKEN_FILENAME), os.ModePerm)
 	if err != nil {
 		return err
 	}
+	logger.WithField("filename", utils.PERSISTENT_TOKEN_FILENAME).Debugln("Creating initial persisten token file")
 	return ioutil.WriteFile(utils.PERSISTENT_TOKEN_FILENAME, []byte(""), os.ModePerm)
 }
 
@@ -56,12 +59,15 @@ func Add(login string, auth_info *govk.AuthInfo) error {
 			return err
 		}
 	}
-	encrypted, err := crypt.EncryptToken(auth_info.Access_token)
+
+	encrypted_auth_info := *auth_info
+
+	encrypted_auth_info.Access_token, err = crypt.EncryptToken(encrypted_auth_info.Access_token)
 	if err != nil {
 		return err
 	}
-	auth_info.Access_token = encrypted
-	persistent_token_value[login] = *auth_info
+
+	persistent_token_value[login] = encrypted_auth_info
 
 	contents, err := yaml.Marshal(&persistent_token_value)
 	if err != nil {

@@ -25,6 +25,8 @@ type AuthFlags struct {
 	Reuse_token  bool
 }
 
+var logger = utils.GomusicLogger.WithField("prefix", "gomusic.auth")
+
 func SetAuthFlags(c *cobra.Command) {
 	// Basic auth
 	c.Flags().StringP("login", "l", "", "Login")
@@ -50,7 +52,7 @@ func GetAuthFlags(cmd *cobra.Command) (*AuthFlags, error) {
 	auth_flags.Auth_secret, _ = cmd.Flags().GetString("auth_secret")
 	auth_flags.Reuse_token, _ = cmd.Flags().GetBool("reuse_token")
 	auth_flags.Cfile, _ = cmd.Flags().GetString("cfile")
-	utils.GomusicLogger.WithField("auth_flags", fmt.Sprintf("%+v", auth_flags)).Debugln("Got auth flags")
+	logger.WithField("auth_flags", fmt.Sprintf("%+v", auth_flags)).Debugln("Got auth flags")
 
 	if auth_flags.Cfile != "" {
 		if !utils.FileExists(auth_flags.Cfile) {
@@ -58,7 +60,7 @@ func GetAuthFlags(cmd *cobra.Command) (*AuthFlags, error) {
 		}
 		b, err := ioutil.ReadFile(auth_flags.Cfile)
 		if err != nil {
-			utils.GomusicLogger.WithFields(logrus.Fields{
+			logger.WithFields(logrus.Fields{
 				"cfile": auth_flags.Cfile,
 				"err":   err,
 			}).Errorln("Cant read supplied cfile")
@@ -66,14 +68,14 @@ func GetAuthFlags(cmd *cobra.Command) (*AuthFlags, error) {
 		}
 		err = yaml.Unmarshal(b, &auth_flags)
 		if err != nil {
-			utils.GomusicLogger.WithFields(logrus.Fields{
+			logger.WithFields(logrus.Fields{
 				"cfile":    auth_flags.Cfile,
 				"err":      err,
 				"contents": string(b),
 			}).Errorln("Cant unmarshall supplied cfile")
 			return nil, err
 		}
-		utils.GomusicLogger.WithFields(logrus.Fields{
+		logger.WithFields(logrus.Fields{
 			"auth_flags": fmt.Sprintf("%+v", auth_flags),
 			"cfile":      auth_flags.Cfile,
 		}).Debugln("Got auth flags after unmarshalling cfile")
@@ -82,7 +84,7 @@ func GetAuthFlags(cmd *cobra.Command) (*AuthFlags, error) {
 }
 
 func AuthByAccessToken(access_token string) (*govk.Api, error) {
-	utils.GomusicLogger.WithField("access_token", access_token).Infoln("Authenticated by access token")
+	logger.WithField("access_token", access_token).Infoln("Authenticated by access token")
 	return govk.NewApi(access_token), nil
 }
 
@@ -92,7 +94,7 @@ func GenerateAuthCode(auth_secret string) (string, error) {
 
 func AuthByLoginAndPassword(login, password, auth_code, auth_secret string, reuse_token bool) (*govk.Api, error) {
 	var err error
-	logger := utils.GomusicLogger.WithField("login", login)
+	logger := logger.WithField("login", login)
 	logger.Infoln("Authenticating by login and password")
 	var auth_info *govk.AuthInfo
 	if reuse_token {
@@ -100,17 +102,19 @@ func AuthByLoginAndPassword(login, password, auth_code, auth_secret string, reus
 	}
 	if auth_info == nil {
 		if auth_secret != "" && auth_code == "" {
-			utils.GomusicLogger.Infoln("Found auth_secret, and auth_code is empty. Generating...")
+			logger.Infoln("Found auth_secret, and auth_code is empty. Generating...")
 			auth_code, err = GenerateAuthCode(auth_secret)
 			if err != nil {
 				logger.WithField("err", err).Errorln("Error generating auth code")
 				return nil, err
 			}
 		}
-		auth_info, err := govk.Authenticate(login, password, utils.CLIENT_ID, &utils.SCOPE, auth_code)
+		auth_info, err = govk.Authenticate(login, password, utils.CLIENT_ID, &utils.SCOPE, auth_code)
 		if err != nil {
 			return nil, err
 		}
+		logger.WithField("auth_info", auth_info).Info("Successfully authenticated")
+
 		err = persistent_token.Add(login, auth_info)
 		if err != nil {
 			logger.WithField("err", err).Warningln("Error adding persistent token")
@@ -131,7 +135,7 @@ func AuthByFlags(auth_flags *AuthFlags) (*govk.Api, error) {
 		}
 	default:
 		{
-			utils.GomusicLogger.Errorln("Flags --access_token or --login and --password are required.")
+			logger.Errorln("Flags --access_token or --login and --password are required.")
 			return nil, errors.New("Flags --access_token or --login and --password are required.")
 		}
 

@@ -24,10 +24,5 @@ _testmain.go
 *.exe
 *.test
 *.prof
-bin
-pkg
-src/github.com
-src/golang.org
-src/gopkg.in
 creds.yaml
-
+.idea
