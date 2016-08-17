@@ -12,6 +12,7 @@ import (
 	"path"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 var skip_error, skip_exists bool
@@ -22,7 +23,7 @@ func make_audio_filename(audio *structs.Audio) string {
 }
 
 var DownloadCommand = &cobra.Command{
-	Use:   "download",
+	Use:   "download [audio_id [audio_id [...]]]",
 	Short: "Music download",
 	Long:  `Music download`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -41,6 +42,9 @@ var DownloadCommand = &cobra.Command{
 		}
 		if album_id != 0 {
 			params["album_id"] = strconv.Itoa(album_id)
+		}
+		if len(args) > 0 {
+			params["audio_ids"] = strings.Join(args, ",")
 		}
 		err = api.StructRequest("audio.get", params, &audio_list)
 		if err != nil {
