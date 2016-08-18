@@ -29,5 +29,4 @@ deploy:
     - gomusic-windows-amd64.zip
     - gomusic-linux-amd64.tar.gz
   skip_cleanup: true
-  on:
-    tags: true
+  overwrite: true
