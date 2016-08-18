@@ -10,8 +10,12 @@ type Audio struct {
 }
 
 func (a *Audio) CleanUrl() string {
-	parsed, _ := url.Parse(a.Url)
-	return parsed.Scheme + "://" + parsed.Host + parsed.Path
+	if a.Url != "" {
+		parsed, _ := url.Parse(a.Url)
+		return parsed.Scheme + "://" + parsed.Host + parsed.Path
+	} else {
+		return ""
+	}
 }
 
 type AudioResponseList struct {

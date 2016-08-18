@@ -12,6 +12,7 @@ var AuthCommand = &cobra.Command{
 	Short: "Authenticate user and print access token",
 	Long:  `Long help`,
 	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Flag("reuse_token").Value.Set("false")
 		api, err := auth.Authenticate(cmd)
 		if err != nil {
 			fmt.Println(err)

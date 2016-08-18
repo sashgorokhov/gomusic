@@ -28,4 +28,5 @@ func init() {
 	RootCmd.AddCommand(GroupsCommand)
 	RootCmd.AddCommand(DownloadCommand)
 	RootCmd.AddCommand(CleanlogCommand)
+	RootCmd.AddCommand(PostsCommand)
 }

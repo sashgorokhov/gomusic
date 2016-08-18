@@ -17,6 +17,7 @@ import (
 
 var skip_error, skip_exists bool
 var destination string
+var post_id string
 
 func make_audio_filename(audio *structs.Audio) string {
 	return path.Join(filepath.ToSlash(destination), formatters.Format_audio_filename(audio))
@@ -46,7 +47,20 @@ var DownloadCommand = &cobra.Command{
 		if len(args) > 0 {
 			params["audio_ids"] = strings.Join(args, ",")
 		}
-		err = api.StructRequest("audio.get", params, &audio_list)
+		if post_id == "" {
+			err = api.StructRequest("audio.get", params, &audio_list)
+		} else {
+			type post_response struct {
+				Response []structs.Post `json:"response"`
+			}
+			var posts_list post_response
+			err = api.StructRequest("wall.getById", map[string]string{
+				"posts": post_id,
+			}, &posts_list)
+			if err == nil {
+				audio_list.Response.Items = GetPostAudios(&posts_list.Response[0])
+			}
+		}
 		if err != nil {
 			fmt.Println(err)
 			if error_struct, ok := err.(govk.ResponseError); ok {
@@ -57,16 +71,20 @@ var DownloadCommand = &cobra.Command{
 
 		os.MkdirAll(destination, os.ModeDir)
 
-		for _, v := range audio_list.Response.Items {
-			filename := make_audio_filename(&v)
+		for _, audio := range audio_list.Response.Items {
+			filename := make_audio_filename(&audio)
 			_, file := path.Split(filename)
 			if _, err := os.Stat(filename); err == nil && skip_exists {
 				fmt.Printf("%s: File exists - Skipping\n", file)
 				continue
 			}
-			err := utils.Download_file(v.CleanUrl(), filename)
-			if err != nil && !skip_error {
-				panic(err)
+			err := utils.Download_file(audio.CleanUrl(), filename)
+			if err != nil {
+				if !skip_error {
+					panic(err)
+				} else {
+					fmt.Printf("Error while downloading %s: %s", file, err)
+				}
 			}
 		}
 	},
@@ -76,6 +94,7 @@ func init() {
 	DownloadCommand.Flags().IntVar(&offset, "offset", 0, "Offset")
 	DownloadCommand.Flags().IntVarP(&count, "count", "c", 50, "How many audios to fetch. Specify -1 to show all available (offset also works here).")
 	DownloadCommand.Flags().IntVar(&owner_id, "owner_id", 0, "Owner id")
+	DownloadCommand.Flags().StringVar(&post_id, "post_id", "", "Post id")
 	DownloadCommand.Flags().IntVar(&album_id, "album_id", 0, "Album id")
 	DownloadCommand.Flags().BoolVar(&skip_error, "skip_error", true, "Continue downloading if error occured")
 	DownloadCommand.Flags().BoolVar(&skip_exists, "skip_exists", true, "Do not download audio if it is already downloaded")
