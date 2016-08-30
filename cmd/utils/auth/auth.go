@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 )
@@ -43,15 +44,23 @@ func SetAuthFlags(c *cobra.Command) {
 	c.Flags().Bool("reuse_token", true, "Reuse access token stored in credentials file at ~/.gomusic/persistent_tokens")
 }
 
+func getFlagString(cmd *cobra.Command, name string) string {
+	value, _ := cmd.Flags().GetString(name)
+	if value == "" {
+		value, _ = os.LookupEnv("GOMUSIC_" + strings.ToUpper(name))
+	}
+	return value
+}
+
 func GetAuthFlags(cmd *cobra.Command) (*AuthFlags, error) {
 	auth_flags := AuthFlags{}
-	auth_flags.Login, _ = cmd.Flags().GetString("login")
-	auth_flags.Password, _ = cmd.Flags().GetString("password")
-	auth_flags.Access_token, _ = cmd.Flags().GetString("access_token")
-	auth_flags.Auth_code, _ = cmd.Flags().GetString("auth_code")
-	auth_flags.Auth_secret, _ = cmd.Flags().GetString("auth_secret")
+	auth_flags.Login = getFlagString(cmd, "login")
+	auth_flags.Password = getFlagString(cmd, "password")
+	auth_flags.Access_token = getFlagString(cmd, "access_token")
+	auth_flags.Auth_code = getFlagString(cmd, "auth_code")
+	auth_flags.Auth_secret = getFlagString(cmd, "auth_secret")
 	auth_flags.Reuse_token, _ = cmd.Flags().GetBool("reuse_token")
-	auth_flags.Cfile, _ = cmd.Flags().GetString("cfile")
+	auth_flags.Cfile = getFlagString(cmd, "cfile")
 	logger.WithField("auth_flags", fmt.Sprintf("%+v", auth_flags)).Debugln("Got auth flags")
 
 	if auth_flags.Cfile != "" {
